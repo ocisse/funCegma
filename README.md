@@ -1,0 +1,4 @@
+fCEGMA
+===============
+
+Fungal cegma pipeline
