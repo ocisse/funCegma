@@ -52,12 +52,12 @@ GetOptions(
 );
 
 unless (@ARGV >= 2){
-	croak ("require at least < proteins for TBLASTN > and < Option >");
+	croak ("requires at least < proteins for TBLASTN > and < Option >");
 }
 
 if ($mode){
 	unless ($size && ($size =~ /^[0-9]+$/)) {
-		croak("local mode require no. of cpus to use, please provide cpu!\ncluster mode require mem size\n");
+		croak("local mode requires no. of cpus to use, please provide cpu!\ncluster mode requires mem size\n");
 	}
 }
 
@@ -100,6 +100,6 @@ foreach my $file (@list){
 sub run {
 	my ($cmd) = @_; 
 	say $cmd;
-	#system($cmd)==0 || croak "cannot run $cmd:$!\n";	
+	system($cmd)==0 || croak "cannot run $cmd:$!\n";	
 
 }
