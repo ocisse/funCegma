@@ -81,15 +81,17 @@ while((my $filename  = readdir(DIR))){
 close DIR;
 
 # run tblastn on each chunk
-my $file = ''; 
+my $file = '';
+
+run("rm $file.sh $file.TBLASTN"); # just in case
 foreach my $file (@list){
- 	run("rm $file.sh $file.TBLASTN"); # just in case
  	run("echo \"module load ncbi-blast/2.2.29+\" > $file.sh");
- 	run("echo \"makeblastdb -in $file -dbtype nucl -parse_seqids -out $file.db");
+ 	run("makeblastdb -in $file -dbtype nucl -parse_seqids -out $file.db");
 	if ($mode =~ /cluster/){
 		 my $memsize = "$size"."gb"; 
 		 run("echo \"tblastn -db $file.db -query $coreProteins -word_size 5 -max_target_seqs 5 -seg yes -lcase_masking -outfmt \'7 sseqid sstart send sframe bitscore qseqid\' > $file.TBLASTN\" >> $file.sh");
-		 run("qsub -d `pwd` mem=$memsize $file.sh");
+		 run("qsub -l mem=$memsize -d `pwd` $file.sh");
+
 	} elsif ($mode =~ /local/){
 		 run("tblastn -db $file.db -query $coreProteins -word_size 5 -max_target_seqs 5 -seg yes -lcase_masking -num_threads $size -outfmt \'7 sseqid sstart send sframe bitscore qseqid\' > $file.TBLASTN");
 		}
@@ -100,6 +102,6 @@ foreach my $file (@list){
 sub run {
 	my ($cmd) = @_; 
 	say $cmd;
-	system($cmd)==0 || croak "cannot run $cmd:$!\n";	
+	 system($cmd)==0 || carp "cannot run $cmd:$!\n";	
 
 }
